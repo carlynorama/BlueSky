@@ -22,6 +22,8 @@ public struct ExampleWeatherView: View {
     
     @State var locality:String?
     
+    //public init() {}
+    
     public var body: some View {
         Group {
             VStack {
