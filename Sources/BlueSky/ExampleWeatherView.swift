@@ -8,10 +8,10 @@
 import SwiftUI
 import WeatherKit
 
-
-public struct ExampleWeatherView: View {
+/// A view that displays the temperature in Los Angeles.
+struct ExampleWeatherView: View {
     @State var currentLocation = LocationStore.locations[0]
-    
+
     /// The current weather condition for the location.
     @State private var condition: WeatherCondition?
     /// Indicates whether it will rain soon.
@@ -19,17 +19,17 @@ public struct ExampleWeatherView: View {
     @State private var cloudCover: Double?
     @State private var temperature: Measurement<UnitTemperature>?
     @State private var symbolName: String?
-    
+
     @State var locality:String?
-    
+
     //public init() {}
-    
-    public var body: some View {
+
+    var body: some View {
         Group {
             VStack {
                 Text(locality ?? "Place name not found")
                 Text(temperature?.description ?? "Test")
-                
+
             }.overlay(alignment: .bottomTrailing) {
                 if let currentWeatherCondition = condition, let willRainSoon = willRainSoon, let symbolName = symbolName {
                     WeatherDisplayCard(
@@ -48,8 +48,8 @@ public struct ExampleWeatherView: View {
                 cloudCover = weather.currentWeather.cloudCover
                 temperature = weather.currentWeather.temperature
                 symbolName = weather.currentWeather.symbolName
-                
-                
+
+
             } catch {
                 print("Could not gather weather information...", error.localizedDescription)
                 condition = .clear
@@ -61,7 +61,7 @@ public struct ExampleWeatherView: View {
             do {
                 locality = try await currentLocation.placemarkDescription
             } catch {
-                
+
             }
         }
     }
