@@ -9,7 +9,7 @@ import SwiftUI
 import WeatherKit
 
 
-struct ExampleWeatherView: View {
+public struct ExampleWeatherView: View {
     @State var currentLocation = LocationStore.locations[0]
     
     /// The current weather condition for the location.
@@ -22,7 +22,7 @@ struct ExampleWeatherView: View {
     
     @State var locality:String?
     
-    var body: some View {
+    public var body: some View {
         Group {
             VStack {
                 Text(locality ?? "Place name not found")
