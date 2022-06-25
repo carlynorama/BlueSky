@@ -29,16 +29,6 @@ struct ExampleWeatherView: View {
             VStack {
                 Text(locality ?? "Place name not found")
                 Text(temperature?.description ?? "Test")
-
-            }.overlay(alignment: .bottomTrailing) {
-                if let currentWeatherCondition = condition, let willRainSoon = willRainSoon, let symbolName = symbolName {
-                    WeatherDisplayCard(
-                        condition: currentWeatherCondition,
-                        willRainSoon: willRainSoon,
-                        symbolName: symbolName
-                    )
-                    .padding(.bottom)
-                }
             }
         }.task() {
             do {
