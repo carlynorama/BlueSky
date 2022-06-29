@@ -9,6 +9,16 @@ import Foundation
 import WeatherKit
 
 extension WeatherKit.Wind.CompassDirection {
+    
+    static func directionFromRadians(_ radians:Double) -> Self? {
+        for direction in Self.allCases {
+            if (direction.radianValues.lower...direction.radianValues.upper).contains(radians) {
+                return direction
+            }
+        }
+        return nil
+    }
+    
     var wedgeNumber:Int {
         switch self {
         case .north: return 0
