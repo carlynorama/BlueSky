@@ -33,7 +33,11 @@ extension Wind {
         // B is Beaufort scale number
         // v * (8/13) = B^(3/2)
         // (v * (8/13))^(2/3) = B
-        return pow(self.speed.converted(to: .knots).value * (8.0/13), (2.0/3.0))
+        return Self.calculateBeaufortScale(for: self.speed)
+    }
+    
+    static func calculateBeaufortScale(for speed:Measurement<UnitSpeed>) -> Double {
+        return pow(speed.converted(to: .knots).value * (8.0/13), (2.0/3.0))
     }
 
 }
