@@ -7,10 +7,12 @@
 
 import SwiftUI
 import WeatherKit
+import CoreLocation
+
 
 /// A view that displays the temperature in Los Angeles.
-struct ExampleWeatherView: View {
-    @State var currentLocation = LocationStore.locations[0]
+struct HelloWeather: View {
+    @State var currentLocation = CLLocation(latitude: 34.0536909, longitude: -118.242766)
 
     /// The current weather condition for the location.
     @State private var condition: WeatherCondition?
@@ -20,19 +22,19 @@ struct ExampleWeatherView: View {
     @State private var temperature: Measurement<UnitTemperature>?
     @State private var symbolName: String?
 
-    @State var locality:String?
+    @State var locality = "Los Angeles, CA"
 
     //public init() {}
 
     var body: some View {
         Group {
             VStack {
-                Text(locality ?? "Place name not found")
+                Text(locality)
                 Text(temperature?.description ?? "Test")
             }
         }.task() {
             do {
-                let weather = try await WeatherService.shared.weather(for: currentLocation.cllocation)
+                let weather = try await WeatherService.shared.weather(for: currentLocation)
                 condition = weather.currentWeather.condition
                 willRainSoon = weather.minuteForecast?.contains(where: { $0.precipitationChance >= 0.3 })
                 cloudCover = weather.currentWeather.cloudCover
@@ -47,18 +49,12 @@ struct ExampleWeatherView: View {
                 cloudCover = 0.15
             }
         }
-        .task {
-            do {
-                locality = try await currentLocation.placemarkDescription
-            } catch {
-
-            }
-        }
+       
     }
 }
 
 struct ExampleWeatherView_Previews: PreviewProvider {
     static var previews: some View {
-        ExampleWeatherView()
+        HelloWeather()
     }
 }

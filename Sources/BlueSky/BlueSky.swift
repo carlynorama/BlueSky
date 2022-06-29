@@ -13,10 +13,10 @@ public struct BlueSky {
     /// }
     /// ```
     ///
-    public struct ExampleView:View {
+    public struct WeatherTestView:View {
         public init() {}
         public var body: some View {
-            ExampleWeatherView()
+            HelloWeather()
         }
     }
 
