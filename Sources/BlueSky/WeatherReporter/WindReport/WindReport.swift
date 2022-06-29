@@ -28,6 +28,17 @@ extension Wind {
         }
         return nil
     }
+    
+    public var calculatedBeaufortScale:Double {
+        // v knots = (13/8) B^3/2
+        // where:
+        // v is the equivalent wind speed at 10 metres above the sea surface and
+        // B is Beaufort scale number
+        // v * (8/13) = B^(3/2)
+        // (v * (8/13))^(2/3) = B
+        return pow(self.speed.converted(to: .knots).value * (8.0/13), (2.0/3.0))
+    }
+
 }
 
 
@@ -106,7 +117,11 @@ public enum WindScaleValue:Int {
          hurricane
 }
 
-extension WindScaleValue {
+public extension WindScaleValue {
+    var force:Int {
+        windLevels[self.rawValue].force
+    }
+    
     var description:String {
         windLevels[self.rawValue].description
     }
