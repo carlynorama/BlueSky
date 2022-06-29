@@ -12,9 +12,14 @@
 
 import Foundation
 
+public struct Location:Locatable {
+    public let latitude:Double
+    public let longitude:Double
+    let description:String
+}
 
 struct LocationStore {
-    static let locations = [
+    public static let locations = [
         Location(
             latitude: 34.0536909,
             longitude: -118.242766,
@@ -65,3 +70,4 @@ struct LocationStore {
             description: "Bali")
     ]
 }
+

@@ -7,10 +7,12 @@
 
 import CoreLocation
 
-struct Location {
-    let latitude:Double
-    let longitude:Double
-    let description:String
+public protocol Locatable {
+    var latitude:Double {get}
+    var longitude:Double {get}
+}
+
+extension Locatable {
     
     var cllocation:CLLocation {
         CLLocation(latitude: latitude, longitude: longitude)
@@ -49,3 +51,4 @@ struct Location {
         return firstLocation
     }
 }
+
