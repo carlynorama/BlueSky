@@ -12,7 +12,19 @@ import Foundation
 import WeatherKit
 
 
-
+extension WeatherData {
+    public func windCompassDirectionNameFor(radians:Double) -> String {
+        Wind.CompassDirection.directionFromRadians(radians)?.description ?? "No direction"
+    }
+    
+    public func windScaleFromSpeed(_ speed:Measurement<UnitSpeed>) -> (label:String, levelNumber:Int, calculatedLevel:Double) {
+        let calculated = Wind.calculateBeaufortScale(for: speed)
+        let levelNumber = Int(calculated.rounded())
+        let label = WindScaleValue(rawValue: levelNumber)!.description
+        
+        return (label, levelNumber, calculated)
+    }
+}
 
 
 public struct WindReport {
