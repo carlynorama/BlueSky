@@ -34,9 +34,15 @@ public struct WindReport {
     public let direction:Measurement<UnitAngle>
     public let speed:Measurement<UnitSpeed>
     public let gustSpeed:Measurement<UnitSpeed>?
-    public let asStandardUnits:(direction:Double, speed:Double, gust:Double?)
+    public let directionAsRadians:Double
+    public let speedAsMPS:Double
+    public let gustSpeedAsMPS:Double?
     public let compassDirection:Wind.CompassDirection
     public let extendedWindScaleRating:WindScaleValue?
+    
+    public var age:TimeInterval {
+        date.timeIntervalSince(Date.now)
+    }
     
     
     init(_ rawforecast:Forecast<DayWeather>) {
@@ -47,7 +53,9 @@ public struct WindReport {
         direction = forecast.wind.direction
         gustSpeed = forecast.wind.gust
         compassDirection = forecast.wind.compassDirection
-        asStandardUnits = forecast.wind.asStandardUnits
+        directionAsRadians = forecast.wind.directionAsRadians
+        speedAsMPS = forecast.wind.speedAsMPS
+        gustSpeedAsMPS = forecast.wind.gustAsMPS
         extendedWindScaleRating = forecast.wind.extendedWindScaleRating
     }
     
@@ -59,7 +67,9 @@ public struct WindReport {
         direction = forecast.wind.direction
         gustSpeed = forecast.wind.gust
         compassDirection = forecast.wind.compassDirection
-        asStandardUnits = forecast.wind.asStandardUnits
+        directionAsRadians = forecast.wind.directionAsRadians
+        speedAsMPS = forecast.wind.speedAsMPS
+        gustSpeedAsMPS = forecast.wind.gustAsMPS
         extendedWindScaleRating = forecast.wind.extendedWindScaleRating
     }
     
@@ -70,7 +80,9 @@ public struct WindReport {
         direction = weather.wind.direction
         gustSpeed = weather.wind.gust
         compassDirection = weather.wind.compassDirection
-        asStandardUnits = weather.wind.asStandardUnits
+        directionAsRadians = weather.wind.directionAsRadians
+        speedAsMPS = weather.wind.speedAsMPS
+        gustSpeedAsMPS = weather.wind.gustAsMPS
         extendedWindScaleRating = weather.wind.extendedWindScaleRating
     }
 }

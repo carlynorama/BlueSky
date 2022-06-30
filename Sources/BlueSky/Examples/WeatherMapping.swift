@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import BlueSky
+//import BlueSky
 
 
 class WeatherMapping:ObservableObject {
@@ -33,7 +33,9 @@ class WeatherMapping:ObservableObject {
     
     func updateInteralWindData() {
         if let windReport = weatherSource.windReport {
-            (windDirectionRadians, windSpeedMPS, windGustSpeed) = windReport.asStandardUnits
+            windDirectionRadians = windReport.directionAsRadians
+            windSpeedMPS = windReport.speedAsMPS
+            windGustSpeed = windReport.gustSpeedAsMPS
             weatherDate = windReport.date
         } else {
             print("No wind report")

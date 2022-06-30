@@ -9,12 +9,16 @@ import Foundation
 import WeatherKit
 
 extension Wind {
-    var asStandardUnits:(direction:Double, speed:Double, gust:Double?) {
-        (
-            direction:direction.converted(to: .radians).value,
-            speed:speed.converted(to: .metersPerSecond).value,
-            gust:gust?.converted(to: .metersPerSecond).value
-        )
+    var directionAsRadians:Double {
+        self.direction.converted(to: .radians).value
+    }
+    
+    var speedAsMPS:Double {
+        self.speed.converted(to: .metersPerSecond).value
+    }
+    
+    var gustAsMPS:Double? {
+        self.gust?.converted(to: .metersPerSecond).value
     }
     
     var extendedWindScaleRating:WindScaleValue? {

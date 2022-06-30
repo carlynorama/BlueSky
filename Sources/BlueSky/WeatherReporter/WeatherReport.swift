@@ -23,7 +23,6 @@ public struct WeatherReport {
     let windDirection: Measurement<UnitAngle>
     let gustSpeed: Measurement<UnitSpeed>?
     let windCompassDirection:Wind.CompassDirection
-    let windAsStandardUnits:(direction:Double, speed:Double, gust:Double?)
     
     var isDailyForecast: Bool {
         temperature.isDaily
@@ -53,7 +52,6 @@ public extension WeatherReport {
         windDirection = forecast.wind.direction
         gustSpeed = forecast.wind.gust
         windCompassDirection = forecast.wind.compassDirection
-        windAsStandardUnits = forecast.wind.asStandardUnits
     }
     
     init(_ forecast: HourWeather) {
@@ -67,7 +65,6 @@ public extension WeatherReport {
         windDirection = forecast.wind.direction
         gustSpeed = forecast.wind.gust
         windCompassDirection = forecast.wind.compassDirection
-        windAsStandardUnits = forecast.wind.asStandardUnits
     }
     
     init(_ rawForcast: Forecast<DayWeather>) {
@@ -84,7 +81,6 @@ public extension WeatherReport {
         windDirection = forecast.wind.direction
         gustSpeed = forecast.wind.gust
         windCompassDirection = forecast.wind.compassDirection
-        windAsStandardUnits = forecast.wind.asStandardUnits
     }
     
     init(_ currentWeather: CurrentWeather) {
@@ -99,7 +95,6 @@ public extension WeatherReport {
         windDirection = forecast.wind.direction
         gustSpeed = forecast.wind.gust
         windCompassDirection = forecast.wind.compassDirection
-        windAsStandardUnits = forecast.wind.asStandardUnits
     }
 }
 
@@ -148,8 +143,7 @@ extension WeatherReport {
             windSpeed: windSpeed,
             windDirection: windDirection,
             gustSpeed: gustSpeed,
-            windCompassDirection: Wind.CompassDirection.north,
-            windAsStandardUnits: (direction: 0.0, speed: 4.2, gust: 5.2)
+            windCompassDirection: Wind.CompassDirection.north
         )
     }
     
@@ -164,8 +158,7 @@ extension WeatherReport {
             windSpeed: windSpeed,
             windDirection: windDirection,
             gustSpeed: gustSpeed,
-            windCompassDirection: Wind.CompassDirection.north,
-            windAsStandardUnits: (direction: 0.0, speed: 4.2, gust: 5.2)
+            windCompassDirection: Wind.CompassDirection.north
         )
     }
     
