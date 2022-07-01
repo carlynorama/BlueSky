@@ -14,11 +14,11 @@ import WeatherKit
 
 extension WeatherData {
     public func windCompassDirectionNameFor(radians:Double) -> String {
-        Wind.CompassDirection.directionFromRadians(radians)?.description ?? "No direction"
+        WindReport.compassDirectionFor(radians: radians).description
     }
     
     public func windScaleFromSpeed(_ speed:Measurement<UnitSpeed>) -> (label:String, levelNumber:Int, calculatedLevel:Double) {
-        let calculated = Wind.calculateBeaufortScale(for: speed)
+        let calculated = WindScaleValue.calculateBeaufortScale(for: speed)
         let levelNumber = Int(calculated.rounded())
         let label = WindScaleValue(rawValue: levelNumber)!.description
         
@@ -29,7 +29,7 @@ extension WeatherData {
 
 public struct WindReport {
     public let date:Date
-    public let windData:Wind
+    //public let windData:Wind
     
     public let direction:Measurement<UnitAngle>
     public let speed:Measurement<UnitSpeed>
@@ -43,47 +43,144 @@ public struct WindReport {
     public var age:TimeInterval {
         date.timeIntervalSince(Date.now)
     }
-    
-    
+}
+
+public extension WindReport {
     init(_ rawforecast:Forecast<DayWeather>) {
         let forecast = rawforecast[0]
-        date = forecast.date
-        windData = forecast.wind
-        speed = forecast.wind.speed
-        direction = forecast.wind.direction
-        gustSpeed = forecast.wind.gust
-        compassDirection = forecast.wind.compassDirection
-        directionAsRadians = forecast.wind.directionAsRadians
-        speedAsMPS = forecast.wind.speedAsMPS
-        gustSpeedAsMPS = forecast.wind.gustAsMPS
-        extendedWindScaleRating = forecast.wind.extendedWindScaleRating
+        self = MutatingWindReport(date:forecast.date, windData:forecast.wind).returnStatic()
     }
     
     init(_ rawforecast:Forecast<HourWeather>) {
         let forecast = rawforecast[0]
-        date = forecast.date
-        windData = forecast.wind
-        speed = forecast.wind.speed
-        direction = forecast.wind.direction
-        gustSpeed = forecast.wind.gust
-        compassDirection = forecast.wind.compassDirection
-        directionAsRadians = forecast.wind.directionAsRadians
-        speedAsMPS = forecast.wind.speedAsMPS
-        gustSpeedAsMPS = forecast.wind.gustAsMPS
-        extendedWindScaleRating = forecast.wind.extendedWindScaleRating
+        self = MutatingWindReport(date:forecast.date, windData:forecast.wind).returnStatic()
+        
     }
     
     init(_ weather:CurrentWeather) {
-        date = weather.date
-        windData = weather.wind
-        speed = weather.wind.speed
-        direction = weather.wind.direction
-        gustSpeed = weather.wind.gust
-        compassDirection = weather.wind.compassDirection
-        directionAsRadians = weather.wind.directionAsRadians
-        speedAsMPS = weather.wind.speedAsMPS
-        gustSpeedAsMPS = weather.wind.gustAsMPS
-        extendedWindScaleRating = weather.wind.extendedWindScaleRating
+        self = MutatingWindReport(date:weather.date, windData:weather.wind).returnStatic()
     }
+    
+    init(date: Date, windData:Wind) {
+        self = MutatingWindReport(date:date, windData:windData).returnStatic()
+    }
+    
+    init(date:Date = Date.now, direction:Measurement<UnitAngle>, speed: Measurement<UnitSpeed>, gustSpeed: Measurement<UnitSpeed>?) {
+        let temp = MutatingWindReport(date: date, direction: direction, speed: speed, gustSpeed: gustSpeed)
+        self = Self(temp)
+    }
+    
+    fileprivate init(_ mutatingWR: MutatingWindReport) {
+        date = mutatingWR.date
+        //windData = mutatingWR.windData
+        speed = mutatingWR.speed
+        direction = mutatingWR.direction
+        gustSpeed = mutatingWR.gustSpeed
+        compassDirection = mutatingWR.compassDirection
+        directionAsRadians = mutatingWR.directionAsRadians
+        speedAsMPS = mutatingWR.speedAsMPS
+        gustSpeedAsMPS = mutatingWR.gustSpeedAsMPS
+        extendedWindScaleRating = mutatingWR.extendedWindScaleRating
+    }
+}
+
+//For ProtoypingUI
+public struct MutatingWindReport {
+    public var date:Date
+    
+    public var direction:Measurement<UnitAngle>
+    public var speed:Measurement<UnitSpeed>
+    public var gustSpeed:Measurement<UnitSpeed>?
+    
+    public var directionAsRadians:Double {
+        self.direction.converted(to: .radians).value
+    }
+    public var speedAsMPS:Double {
+        self.speed.converted(to: .metersPerSecond).value
+    }
+    public var gustSpeedAsMPS:Double? {
+        self.gustSpeed?.converted(to: .metersPerSecond).value
+    }
+    public var compassDirection:Wind.CompassDirection{
+        Wind.CompassDirection(compassAngle: self.direction)
+    }
+    public var extendedWindScaleRating:WindScaleValue? {
+        WindScaleValue(averageSpeed: self.speed)
+    }
+}
+
+public extension MutatingWindReport {
+    
+    init(from report:WindReport) {
+        self.date = report.date
+        self.direction = report.direction
+        self.speed = report.speed
+        self.gustSpeed = report.gustSpeed
+    }
+    
+    init(date: Date, windData:Wind) {
+        self.date = date
+        self.direction = windData.direction
+        self.speed = windData.speed
+        self.gustSpeed = windData.gust
+        
+        //TODO: Turn into unit test
+        if (windData.compassDirection != self.compassDirection) {
+            print("windData CD\(windData.compassDirection.description) does not equal \(self.compassDirection.description) ")
+        }
+        
+        
+    }
+    
+    func returnStatic() -> WindReport {
+        return WindReport(self)
+    }
+}
+
+//MARK: For UI Prototyping purposes
+public extension WindReport {
+    
+    func windReportWithNew(speed:Measurement<UnitSpeed>) -> WindReport {
+        var dummyReport = MutatingWindReport(from: self)
+        dummyReport.speed = speed
+        dummyReport.date = Date.now
+        return WindReport(dummyReport)
+    }
+    
+    func windReportWithNew(speedMPS:Double) -> WindReport {
+        let speed = Measurement<UnitSpeed>(value: speedMPS, unit: .metersPerSecond)
+        return self.windReportWithNew(speed: speed)
+    }
+    
+    func windReportWithNew(gustSpeed:Measurement<UnitSpeed>) -> WindReport {
+        var dummyReport = MutatingWindReport(from: self)
+        dummyReport.speed = gustSpeed
+        dummyReport.date = Date.now
+        return WindReport(dummyReport)
+    }
+    
+    func windReportWithNew(gustSpeedMPS:Double) -> WindReport {
+        let speed = Measurement<UnitSpeed>(value: gustSpeedMPS, unit: .metersPerSecond)
+        return self.windReportWithNew(speed: speed)
+    }
+    
+    
+    func windReportWithNew(direction:Measurement<UnitAngle>) -> WindReport {
+        var dummyReport = MutatingWindReport(from: self)
+        dummyReport.direction = direction
+        dummyReport.date = Date.now
+        return WindReport(dummyReport)
+    }
+    
+    func windReportWithNew(directionRadians:Double) -> WindReport {
+        let direction = Measurement<UnitAngle>(value: directionRadians, unit: .radians)
+        return self.windReportWithNew(direction: direction)
+    }
+    
+    func windReportWithNew(directionDegrees:Double) -> WindReport {
+        let direction = Measurement<UnitAngle>(value: directionDegrees, unit: .degrees)
+        return self.windReportWithNew(direction: direction)
+    }
+    
 }
 

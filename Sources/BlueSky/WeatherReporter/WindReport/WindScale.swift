@@ -22,26 +22,11 @@ extension Wind {
     }
     
     var extendedWindScaleRating:WindScaleValue? {
-        for (index, level) in windLevels.enumerated() {
-            if (level.windSpeedMin...level.windSpeedMax).contains(self.speed) {
-                return WindScaleValue(rawValue: index)
-            }
-        }
-        return nil
+        WindScaleValue(averageSpeed: self.speed)
     }
     
     public var calculatedBeaufortScale:Double {
-        // v knots = (13/8) B^3/2
-        // where:
-        // v is the equivalent wind speed at 10 metres above the sea surface and
-        // B is Beaufort scale number
-        // v * (8/13) = B^(3/2)
-        // (v * (8/13))^(2/3) = B
-        return Self.calculateBeaufortScale(for: self.speed)
-    }
-    
-    static func calculateBeaufortScale(for speed:Measurement<UnitSpeed>) -> Double {
-        return pow(speed.converted(to: .knots).value * (8.0/13), (2.0/3.0))
+        return WindScaleValue.calculateBeaufortScale(for: self.speed)
     }
 
 }
@@ -70,6 +55,32 @@ public enum WindScaleValue:Int {
          severeGale,
          storm,
          hurricane
+
+}
+
+public extension WindScaleValue {
+    
+    init?(averageSpeed:Measurement<UnitSpeed>) {
+        //TODO: Benchmark against clamping calculated?
+        for (index, level) in windLevels.enumerated() {
+            if (level.windSpeedMin...level.windSpeedMax).contains(averageSpeed) {
+                if let wsv = WindScaleValue(rawValue:index) {
+                    self = wsv
+                }
+            }
+        }
+        return nil
+    }
+    
+    static func calculateBeaufortScale(for speed:Measurement<UnitSpeed>) -> Double {
+        // v knots = (13/8) B^3/2
+        // where:
+        // v is the equivalent wind speed at 10 metres above the sea surface and
+        // B is Beaufort scale number
+        // v * (8/13) = B^(3/2)
+        // (v * (8/13))^(2/3) = B
+        return pow(speed.converted(to: .knots).value * (8.0/13), (2.0/3.0))
+    }
 }
 
 public extension WindScaleValue {
