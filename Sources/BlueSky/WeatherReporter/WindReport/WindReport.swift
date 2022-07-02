@@ -99,7 +99,7 @@ public struct MutatingWindReport {
         Wind.CompassDirection(compassAngle: self.direction)
     }
     public var windLevel:WindLevel {
-        print("getting windscale")
+        print("BlueSky: getting windscale")
         return WindLevel(averageSpeed: self.speed.converted(to: .knots))
     }
 }
@@ -123,7 +123,7 @@ public extension MutatingWindReport {
         
         //TODO: Turn into unit test
         if (windData.compassDirection != self.compassDirection) {
-            print("windData CD\(windData.compassDirection.description) does not equal \(self.compassDirection.description) ")
+            print("BlueSky: windData CD\(windData.compassDirection.description) does not equal \(self.compassDirection.description) ")
         }
         
         

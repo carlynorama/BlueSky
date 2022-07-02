@@ -35,27 +35,27 @@ extension WeatherKit.Wind.CompassDirection {
         static func wedgeNumberFor(angle:Measurement<UnitAngle>) -> Int {
             var compassAngle = angle.converted(to: .degrees)
             if compassAngle.value.magnitude > degreesCircle {
-                print("Caught a large magnitude value")
+                //print("BlueSky CD.wedgeNumberFor\(angle): Caught a large magnitude value")
                 compassAngle.value = compassAngle.value.truncatingRemainder(dividingBy: degreesCircle)
-                print("newRadiansValue: \(compassAngle)")
+                //print("BlueSky CD.wedgeNumberFor\(angle): \(compassAngle)")
             }
             var wedgeShiftedAngle = compassAngle + wedgeOffSet
-            print("adjusted degrees: \(wedgeShiftedAngle)")
+            //print("BlueSky CD.wedgeNumberFor\(angle): adjusted degrees: \(wedgeShiftedAngle)")
             if wedgeShiftedAngle.value < 0 {
-                print("Caught a negative value")
+                //print("BlueSky CD.wedgeNumberFor\(angle): Caught a negative value")
                 wedgeShiftedAngle.value = wedgeShiftedAngle.value + degreesCircle
-                print("newDegreesValue: \(wedgeShiftedAngle)")
+                //print("BlueSky CD.wedgeNumberFor\(angle): newDegreesValue: \(wedgeShiftedAngle)")
             }
 
             
             let wedgeNumberRaw:Double = (wedgeShiftedAngle.value/wedgeSize.value)
-            print("raw \(wedgeNumberRaw)")
+            //print("BlueSky CD.wedgeNumberFor\(angle): raw \(wedgeNumberRaw)")
             var wedgeNumberToReturn = Int(wedgeNumberRaw.rounded(.awayFromZero))
-            print("as Int \(wedgeNumberToReturn)")
+            //print("BlueSky CD.wedgeNumberFor\(angle): as Int \(wedgeNumberToReturn)")
             if wedgeNumberToReturn == Int(numberOfWedges) {
                 wedgeNumberToReturn = 0
             }
-            print("got wedgeNumber \(wedgeNumberToReturn)")
+            //print("BlueSky CD.wedgeNumberFor\(angle): got wedgeNumber \(wedgeNumberToReturn)")
             return  wedgeNumberToReturn
         }
         
@@ -86,9 +86,9 @@ extension WeatherKit.Wind.CompassDirection {
         static func directionFromWedgeNumber(wedgeNumber:Int) -> Self {
             guard Range(0...(Self.numberOfWedges - 1)).contains(wedgeNumber) else {
                 //TODO: throw error? clamp? divide?
-                print("Bad wedgeNumer: \(wedgeNumber)")
-                fatalError("Attempted wedgeNumber \(wedgeNumber) is out of bounds")
-                
+                //print("BlueSky CD.directionFromWedgeNumber: Bad wedgeNumer: \(wedgeNumber)")
+                fatalError("BlueSky CD.directionFromWedgeNumber: Attempted wedgeNumber \(wedgeNumber) is out of bounds")
+
             }
             
             return Self.allCases.first(where: { $0.wedgeNumber == wedgeNumber })!
