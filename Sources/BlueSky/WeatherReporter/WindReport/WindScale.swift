@@ -54,22 +54,25 @@ public enum WindScaleValue:Int {
          gale,
          severeGale,
          storm,
-         hurricane
+         hurricane,
+        undefined
 
 }
 
 public extension WindScaleValue {
     
-    init?(averageSpeed:Measurement<UnitSpeed>) {
+    //TODO: This is busted.
+    init(averageSpeed:Measurement<UnitSpeed>) {
         //TODO: Benchmark against clamping calculated?
         for (index, level) in windLevels.enumerated() {
             if (level.windSpeedMin...level.windSpeedMax).contains(averageSpeed) {
                 if let wsv = WindScaleValue(rawValue:index) {
                     self = wsv
+                    break
                 }
             }
         }
-        return nil
+        self = WindScaleValue.undefined
     }
     
     static func calculateBeaufortScale(for speed:Measurement<UnitSpeed>) -> Double {
@@ -271,6 +274,14 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Hurricane 5",
                     useAtSea: "The air is filled with foam and spray. The sea is completely white with driving spray. Visibility is seriously affected.",
                     useOnLand: "Catastrophic damage will occur: A high percentage of framed homes will be destroyed, with total roof failure and wall collapse. Fallen trees and power poles will isolate residential areas. Power outages will last for weeks to possibly months. Most of the area will be uninhabitable for weeks or months."),
+     WindScaleLevelDescription(force: 17,
+                    windSpeedMin: Measurement(value: 300, unit: UnitSpeed.knots),
+                    windSpeedMax: Measurement(value: 300, unit: UnitSpeed.knots) ,
+                    waveHeightMin: Measurement(value: 100, unit: UnitLength.meters),
+                    waveHeightMax: Measurement(value: 100, unit: UnitLength.meters),
+                    description: "Undefined",
+                    useAtSea: "Not a normal wind speed",
+                    useOnLand: "Not a normal wind speed"),
     ]
 }
 

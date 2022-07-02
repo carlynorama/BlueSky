@@ -104,7 +104,7 @@ public struct MutatingWindReport {
     public var compassDirection:Wind.CompassDirection{
         Wind.CompassDirection(compassAngle: self.direction)
     }
-    public var extendedWindScaleRating:WindScaleValue? {
+    public var extendedWindScaleRating:WindScaleValue {
         WindScaleValue(averageSpeed: self.speed)
     }
 }
