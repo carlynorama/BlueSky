@@ -55,7 +55,7 @@ public extension WindLevel {
             if (level.windSpeedMin...level.windSpeedMax).contains(averageSpeed) {
                 if let wsv = WindLevel(rawValue:index) {
                     self = wsv
-                    print(wsv.description)
+                    print("BlueSky WindLevel int for averageSpeed \(averageSpeed.description): \(wsv.description)")
                     break
                 }
             }
