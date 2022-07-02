@@ -12,19 +12,13 @@ import Foundation
 import WeatherKit
 
 //TODO: Is this the best place for these function to live?
-extension WeatherData {
-    public func windCompassDirectionNameFor(radians:Double) -> String {
-        WindReport.compassDirectionFor(radians: radians).description
-    }
-    
-    public func windScaleFromSpeed(_ speed:Measurement<UnitSpeed>) -> (label:String, levelNumber:Int, calculatedLevel:Double) {
-        let calculated = WindLevel.calculateBeaufortScale(for: speed)
-        let levelNumber = Int(calculated.rounded())
-        let label = WindLevel(rawValue: levelNumber)!.description
-        
-        return (label, levelNumber, calculated)
-    }
-}
+//extension WeatherData {
+//    public func windCompassDirectionNameFor(radians:Double) -> String {
+//        WindReport.compassDirectionFor(radians: radians).description
+//    }
+//    
+//
+//}
 
 
 public struct WindReport {
