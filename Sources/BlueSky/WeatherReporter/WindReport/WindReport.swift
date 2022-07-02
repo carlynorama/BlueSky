@@ -99,8 +99,8 @@ public struct MutatingWindReport {
         Wind.CompassDirection(compassAngle: self.direction)
     }
     public var windLevel:WindLevel {
-        print("BlueSky: getting windscale")
-        return WindLevel(averageSpeed: self.speed.converted(to: .knots))
+        print("BlueSky: getting windscale for \(speed.description)")
+        return WindLevel(averageSpeed: self.speed)
     }
 }
 
