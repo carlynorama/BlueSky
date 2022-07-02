@@ -48,7 +48,7 @@ public enum WindLevel:Int {
 
 public extension WindLevel {
     
-    //TODO: This is busted.
+    //TODO: This is busted?
     init(averageSpeed:Measurement<UnitSpeed>) {
         //TODO: Benchmark against clamping calculated?
         for (index, level) in windLevels.enumerated() {
@@ -61,6 +61,15 @@ public extension WindLevel {
             }
         }
         self = WindLevel.undefined
+    }
+    
+    //TODO: Swap over to this?
+    func windScalesFromSpeed(_ speed:Measurement<UnitSpeed>) -> (label:String, levelNumber:Int, calculatedLevel:Double) {
+        let calculated = WindLevel.calculateBeaufortScale(for: speed)
+        let levelNumber = Int(calculated.rounded())
+        let label = WindLevel(rawValue: levelNumber)!.description
+        
+        return (label, levelNumber, calculated)
     }
     
     static func calculateBeaufortScale(for speed:Measurement<UnitSpeed>) -> Double {
