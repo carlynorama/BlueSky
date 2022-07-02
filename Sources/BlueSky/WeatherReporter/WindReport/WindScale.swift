@@ -21,28 +21,16 @@ extension Wind {
         self.gust?.converted(to: .metersPerSecond).value
     }
     
-    var extendedWindScaleRating:WindScaleValue? {
-        WindScaleValue(averageSpeed: self.speed)
+    var windLevel:WindLevel? {
+        WindLevel(averageSpeed: self.speed)
     }
     
     public var calculatedBeaufortScale:Double {
-        return WindScaleValue.calculateBeaufortScale(for: self.speed)
+        return WindLevel.calculateBeaufortScale(for: self.speed)
     }
-
 }
 
-struct WindScaleLevelDescription {
-    let force:Int
-    let windSpeedMin:Measurement<UnitSpeed>
-    let windSpeedMax:Measurement<UnitSpeed>
-    let waveHeightMin:Measurement<UnitLength>
-    let waveHeightMax:Measurement<UnitLength>
-    let description:String
-    let useAtSea:String
-    let useOnLand:String
-}
-
-public enum WindScaleValue:Int {
+public enum WindLevel:Int {
     case calm = 0,
          lightAir,
          lightBreeze,
@@ -55,24 +43,24 @@ public enum WindScaleValue:Int {
          severeGale,
          storm,
          hurricane,
-        undefined
-
+         undefined
 }
 
-public extension WindScaleValue {
+public extension WindLevel {
     
     //TODO: This is busted.
     init(averageSpeed:Measurement<UnitSpeed>) {
         //TODO: Benchmark against clamping calculated?
         for (index, level) in windLevels.enumerated() {
             if (level.windSpeedMin...level.windSpeedMax).contains(averageSpeed) {
-                if let wsv = WindScaleValue(rawValue:index) {
+                if let wsv = WindLevel(rawValue:index) {
                     self = wsv
+                    print(wsv.description)
                     break
                 }
             }
         }
-        self = WindScaleValue.undefined
+        self = WindLevel.undefined
     }
     
     static func calculateBeaufortScale(for speed:Measurement<UnitSpeed>) -> Double {
@@ -86,7 +74,7 @@ public extension WindScaleValue {
     }
 }
 
-public extension WindScaleValue {
+public extension WindLevel {
     var force:Int {
         windLevels[self.rawValue].force
     }
@@ -136,9 +124,19 @@ public extension WindScaleValue {
 //             huricane
 //    }
 
+struct WindLevelDescription {
+    let force:Int
+    let windSpeedMin:Measurement<UnitSpeed>
+    let windSpeedMax:Measurement<UnitSpeed>
+    let waveHeightMin:Measurement<UnitLength>
+    let waveHeightMax:Measurement<UnitLength>
+    let description:String
+    let useAtSea:String
+    let useOnLand:String
+}
 
-var windLevels:[WindScaleLevelDescription] {
-    [WindScaleLevelDescription(force: 0,
+var windLevels:[WindLevelDescription] {
+    [WindLevelDescription(force: 0,
                     windSpeedMin: Measurement(value: 0, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 1, unit: UnitSpeed.knots),
                     waveHeightMin: Measurement(value: 0, unit: UnitLength.meters),
@@ -146,7 +144,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Calm",
                     useAtSea: "Sea like a mirror.",
                     useOnLand: "Calm; smoke rises vertically."),
-     WindScaleLevelDescription(force: 1,
+     WindLevelDescription(force: 1,
                     windSpeedMin: Measurement(value: 2, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 3, unit: UnitSpeed.knots),
                     waveHeightMin: Measurement(value: 0, unit: UnitLength.meters),
@@ -154,7 +152,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Light Air",
                     useAtSea: "Ripples with the appearance of scales are formed, but without foam crests.",
                     useOnLand: "Direction of wind shown by smoke drift, but not by wind vanes."),
-     WindScaleLevelDescription(force: 2,
+     WindLevelDescription(force: 2,
                     windSpeedMin: Measurement(value: 4, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 6, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 0.3, unit: UnitLength.meters),
@@ -162,7 +160,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Light Breeze",
                     useAtSea: "Small wavelets, still short, but more pronounced. Crests have a glassy appearance and do not break.",
                     useOnLand: "Wind felt on face; leaves rustle; ordinary vanes moved by wind."),
-     WindScaleLevelDescription(force: 3,
+     WindLevelDescription(force: 3,
                     windSpeedMin: Measurement(value: 7, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 10, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 0.6, unit: UnitLength.meters),
@@ -170,7 +168,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Gentle Breeze",
                     useAtSea: "Large wavelets. Crests begin to break. Foam of glassy appearance. Perhaps scattered white horses.",
                     useOnLand: "Leaves and small twigs in constant motion; wind extends light flag."),
-     WindScaleLevelDescription(force: 4,
+     WindLevelDescription(force: 4,
                     windSpeedMin: Measurement(value: 11, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 16, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 1.0, unit: UnitLength.meters),
@@ -178,7 +176,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Moderate Breeze",
                     useAtSea: "Small waves, becoming larger; fairly frequent white horses.",
                     useOnLand: "Raises dust and loose paper; small branches are moved."),
-     WindScaleLevelDescription(force: 5,
+     WindLevelDescription(force: 5,
                     windSpeedMin: Measurement(value: 17, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 21, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 2.0, unit: UnitLength.meters),
@@ -186,7 +184,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Fresh Breeze",
                     useAtSea: "Moderate waves, taking a more pronounced long form; many white horses are formed.",
                     useOnLand: "Small trees in leaf begin to sway; crested wavelets form on inland waters."),
-     WindScaleLevelDescription(force: 6,
+     WindLevelDescription(force: 6,
                     windSpeedMin: Measurement(value: 22, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 27, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 3.0, unit: UnitLength.meters),
@@ -194,7 +192,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Strong Breeze",
                     useAtSea: "Large waves begin to form; the white foam crests are more extensive everywhere.",
                     useOnLand: "Large branches in motion; whistling heard in telegraph wires; umbrellas used with difficulty."),
-     WindScaleLevelDescription(force: 7,
+     WindLevelDescription(force: 7,
                     windSpeedMin: Measurement(value: 28, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 33, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 4.0, unit: UnitLength.meters),
@@ -202,7 +200,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Near Gale",
                     useAtSea: "Sea heaps up and white foam from breaking waves begins to be blown in streaks along the direction of the wind.",
                     useOnLand: "Whole trees in motion; inconvenience felt when walking against the wind."),
-     WindScaleLevelDescription(force: 8,
+     WindLevelDescription(force: 8,
                     windSpeedMin: Measurement(value: 34, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 40, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 5.5, unit: UnitLength.meters),
@@ -210,7 +208,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Gale",
                     useAtSea: "Moderately high waves of greater length; edges of crests begin to break into spindrift. The foam is blown in well-marked streaks along the direction of the wind.",
                     useOnLand: "Breaks twigs off trees; generally impedes progress."),
-     WindScaleLevelDescription(force: 9,
+     WindLevelDescription(force: 9,
                     windSpeedMin: Measurement(value: 41, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 47, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 7.0, unit: UnitLength.meters),
@@ -218,7 +216,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Severe Gale",
                     useAtSea: "High waves. Dense streaks of foam along the direction of the wind. Crests of waves begin to topple, tumble and roll over. Spray may affect visibility",
                     useOnLand: "Slight structural damage occurs (chimney-pots and slates removed)"),
-     WindScaleLevelDescription(force: 10,
+     WindLevelDescription(force: 10,
                     windSpeedMin: Measurement(value: 48, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 55, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 9.0, unit: UnitLength.meters),
@@ -226,7 +224,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Storm",
                     useAtSea: "Very high waves with long overhanging crests. The resulting foam, in great patches, is blown in dense white streaks along the direction of the wind. On the whole the surface of the sea takes on a white appearance. The tumbling of the sea becomes heavy and shock-like. Visibility affected.",
                     useOnLand: "Seldom experienced inland; trees uprooted; considerable structural damage occurs."),
-     WindScaleLevelDescription(force: 11,
+     WindLevelDescription(force: 11,
                     windSpeedMin: Measurement(value: 56, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 63, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 11.5, unit: UnitLength.meters),
@@ -234,7 +232,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Violent Storm",
                     useAtSea: "Exceptionally high waves (small and medium-size ships might be for a time lost to view behind the waves). The sea is completely covered with long white patches of foam lying along the direction of the wind. Everywhere the edges of the wave crests are blown into froth. Visibility affected.",
                     useOnLand: "Very rarely experienced; accompanied by wide-spread damage."),
-     WindScaleLevelDescription(force: 12,
+     WindLevelDescription(force: 12,
                     windSpeedMin: Measurement(value: 64, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 82, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 14, unit: UnitLength.meters),
@@ -242,7 +240,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Hurricane",
                     useAtSea: "The air is filled with foam and spray. Sea completely white with driving spray; visibility very seriously affected.",
                     useOnLand: "Very dangerous winds will produce some damage: Well-constructed frame homes could have damage to roof, shingles, vinyl siding and gutters. Large branches of trees will snap and shallowly rooted trees may be toppled. Extensive damage to power lines and poles likely will result in power outages that could last a few to several days. "),
-     WindScaleLevelDescription(force: 13,
+     WindLevelDescription(force: 13,
                     windSpeedMin: Measurement(value: 83, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 95, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 14, unit: UnitLength.meters),
@@ -250,7 +248,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Hurricane 2",
                     useAtSea: "The air is filled with foam and spray. The sea is completely white with driving spray. Visibility is seriously affected.",
                     useOnLand: "Extremely dangerous winds will cause extensive damage: Well-constructed frame homes could sustain major roof and siding damage. Many shallowly rooted trees will be snapped or uprooted and block numerous roads. Near-total power loss is expected with outages that could last from several days to weeks."),
-     WindScaleLevelDescription(force: 14,
+     WindLevelDescription(force: 14,
                     windSpeedMin: Measurement(value: 96, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 112, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 14, unit: UnitLength.meters),
@@ -258,7 +256,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Hurricane 3",
                     useAtSea: "The air is filled with foam and spray. The sea is completely white with driving spray. Visibility is seriously affected.",
                     useOnLand: "Devastating damage will occur: Well-built framed homes may incur major damage or removal of roof decking and gable ends. Many trees will be snapped or uprooted, blocking numerous roads. Electricity and water will be unavailable for several days to weeks after the storm passes. "),
-     WindScaleLevelDescription(force: 15,
+     WindLevelDescription(force: 15,
                     windSpeedMin: Measurement(value: 83, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 95, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 15, unit: UnitLength.meters),
@@ -266,7 +264,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Hurricane 4",
                     useAtSea: "The air is filled with foam and spray. The sea is completely white with driving spray. Visibility is seriously affected.",
                     useOnLand: "Catastrophic damage will occur: Well-built framed homes can sustain severe damage with loss of most of the roof structure and/or some exterior walls. Most trees will be snapped or uprooted and power poles downed. Fallen trees and power poles will isolate residential areas. Power outages will last weeks to possibly months. Most of the area will be uninhabitable for weeks or months."),
-     WindScaleLevelDescription(force: 16,
+     WindLevelDescription(force: 16,
                     windSpeedMin: Measurement(value: 137, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 252, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 16, unit: UnitLength.meters),
@@ -274,7 +272,7 @@ var windLevels:[WindScaleLevelDescription] {
                     description: "Hurricane 5",
                     useAtSea: "The air is filled with foam and spray. The sea is completely white with driving spray. Visibility is seriously affected.",
                     useOnLand: "Catastrophic damage will occur: A high percentage of framed homes will be destroyed, with total roof failure and wall collapse. Fallen trees and power poles will isolate residential areas. Power outages will last for weeks to possibly months. Most of the area will be uninhabitable for weeks or months."),
-     WindScaleLevelDescription(force: 17,
+     WindLevelDescription(force: 17,
                     windSpeedMin: Measurement(value: 300, unit: UnitSpeed.knots),
                     windSpeedMax: Measurement(value: 300, unit: UnitSpeed.knots) ,
                     waveHeightMin: Measurement(value: 100, unit: UnitLength.meters),

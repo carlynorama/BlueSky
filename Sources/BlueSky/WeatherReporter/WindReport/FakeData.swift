@@ -15,11 +15,11 @@ import WeatherKit
 extension WindReport {
     public static var example:WindReport {
         let levelRaw = Int.random(in: 0...9)
-        let windLevel = WindScaleValue(rawValue: levelRaw)!
+        let windLevel = WindLevel(rawValue: levelRaw)!
         return example(for: windLevel)
     }
     
-    public static func example(for windLevel:WindScaleValue) -> WindReport{
+    public static func example(for windLevel:WindLevel) -> WindReport{
         let speeds = randomSpeeds(for:windLevel)
 
         return WindReport(
@@ -33,7 +33,7 @@ extension WindReport {
         return Measurement<UnitAngle>(value:Double.random(in:(0.0...360.0)), unit: .degrees)
     }
     
-    static func randomSpeeds(for windLevel:WindScaleValue) -> (average:Measurement<UnitSpeed>, gust:Measurement<UnitSpeed>?) {
+    static func randomSpeeds(for windLevel:WindLevel) -> (average:Measurement<UnitSpeed>, gust:Measurement<UnitSpeed>?) {
         let speedRange = windLevel.windSpeedMin.value..<windLevel.windSpeedMax.value
         var gustSpeed:Double?
         let speed = Double.random(in:speedRange)
