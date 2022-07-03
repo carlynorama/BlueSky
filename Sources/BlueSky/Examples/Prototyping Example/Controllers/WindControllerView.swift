@@ -51,7 +51,7 @@ extension BlueSky {
                     HStack{
                         Text("Gusts Data")
                         Spacer()
-                        Toggle("", isOn:$weatherMap.useGustSpeedIfAvailable)
+                        //Toggle("", isOn:$weatherMap.useGustSpeedIfAvailable)
                     }
                     
                     HStack {
