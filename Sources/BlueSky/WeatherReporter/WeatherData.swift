@@ -9,7 +9,7 @@ import WeatherKit
 import CoreLocation
 
 
-public class WeatherData {
+final public class WeatherData {
     public init() {
     }
     public static let shared = WeatherData()
