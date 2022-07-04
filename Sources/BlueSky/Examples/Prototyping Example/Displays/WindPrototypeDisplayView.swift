@@ -21,12 +21,9 @@ extension BlueSky {
             
         }
     }
- //TODO: Fix preview
-//    struct WindPrototypeDisplayView_Previews: PreviewProvider {
-//        static var previews: some View {
-//            WindPrototypeDisplayView().environmentObject(PrototypeMapping())
-//        }
-//    }
+
 }
+
+
 
 

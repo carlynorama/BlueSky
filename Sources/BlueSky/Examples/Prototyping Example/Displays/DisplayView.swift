@@ -12,11 +12,13 @@ extension BlueSky {
     struct DisplayView: View {
         @EnvironmentObject var weather:PrototypeMapping
         
+        public init() {}
+        
         var windReport:WindReport {
             weather.windReport.returnStatic()
         }
         
-        var body: some View {
+        public var body: some View {
             VStack(alignment: .leading, spacing: 5) {
                 Text("The Weather").font(.largeTitle)
                 Text("Basic Weather Information").font(.title)
@@ -31,10 +33,6 @@ extension BlueSky {
         
     }
     
-//    struct DisplayView_Previews: PreviewProvider {
-//        static var previews: some View {
-//            DisplayView().environmentObject(PrototypeMapping())
-//        }
-//    }
+
     
 }

@@ -22,11 +22,12 @@ public extension BlueSky {
         }
     }
     
-    struct LivePrototypingView_Previews: PreviewProvider {
-        public static var previews: some View {
-            LivePrototypingView()
-        }
-    }
+//    struct LivePrototypingView_Previews: PreviewProvider {
+//        public static var previews: some View {
+//            LivePrototypingView()
+//        }
+//    }
+
 }
 
 
