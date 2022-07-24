@@ -106,6 +106,9 @@ public struct MutatingWindReport {
         print("BlueSky: getting windscale for \(speed.description)")
         return WindLevel(averageSpeed: self.speed)
     }
+    public var calculatedLevel:Double {
+        WindLevel.calculateBeaufortScale(for: self.speed)
+    }
 }
 
 //MARK: Mutating Wind Report
