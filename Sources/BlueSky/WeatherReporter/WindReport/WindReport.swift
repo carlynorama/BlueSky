@@ -37,6 +37,10 @@ public struct WindReport {
     public var age:TimeInterval {
         date.timeIntervalSince(Date.now)
     }
+    
+    public var calculatedLevel:Double {
+        WindLevel.calculateBeaufortScale(for: self.speed)
+    }
 }
 
 public extension WindReport {
