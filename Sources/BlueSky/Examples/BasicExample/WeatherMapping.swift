@@ -2,7 +2,7 @@
 //  WindData.swift
 //  Wind
 //
-//  Created by Labtanza on 6/20/22.
+//  Created by Carlyn Maw on 6/20/22.
 //
 
 import Foundation

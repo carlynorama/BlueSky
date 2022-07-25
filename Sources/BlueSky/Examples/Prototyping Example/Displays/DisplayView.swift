@@ -2,7 +2,7 @@
 //  DisplayView.swift
 //  
 //
-//  Created by Labtanza on 7/3/22.
+//  Created by Carlyn Maw on 7/3/22.
 //
 
 import SwiftUI

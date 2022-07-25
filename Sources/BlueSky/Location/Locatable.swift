@@ -2,7 +2,7 @@
 //  Location.swift
 //  Wind
 //
-//  Created by Labtanza on 6/24/22.
+//  Created by Carlyn Maw on 6/24/22.
 //
 
 import CoreLocation

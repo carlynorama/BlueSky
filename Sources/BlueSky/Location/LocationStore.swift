@@ -2,7 +2,7 @@
 //  LocationStore.swift
 //  Wind
 //
-//  Created by Labtanza on 6/24/22.
+//  Created by Carlyn Maw on 6/24/22.
 //
 // More Locations? https://www.kurzwind.com/9-windiest-cities/
 // Barrow Island, Australia

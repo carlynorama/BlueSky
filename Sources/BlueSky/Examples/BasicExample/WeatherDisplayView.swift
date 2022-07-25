@@ -2,7 +2,7 @@
 //  WeatherDisplayView.swift
 //  Wind
 //
-//  Created by Labtanza on 6/29/22.
+//  Created by Carlyn Maw on 6/29/22.
 //
 
 import SwiftUI
