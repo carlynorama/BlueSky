@@ -30,7 +30,7 @@ extension Wind {
     }
 }
 
-public enum WindLevel:Int {
+public enum WindLevel:Int,CaseIterable {
     case calm = 0,
          lightAir,
          lightBreeze,
