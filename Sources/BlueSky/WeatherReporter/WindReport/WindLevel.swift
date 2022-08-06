@@ -112,6 +112,11 @@ public extension WindLevel {
     var windSpeedMax:Measurement<UnitSpeed> {
         Self.windLevels[self.rawValue].windSpeedMax
     }
+    
+    var windSpeedMid:Measurement<UnitSpeed> {
+        (Self.windLevels[self.rawValue].windSpeedMax + Self.windLevels[self.rawValue].windSpeedMin)/2
+    }
+    
     var waveHeightMin:Measurement<UnitLength> {
         Self.windLevels[self.rawValue].waveHeightMin
     }
