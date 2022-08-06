@@ -140,7 +140,7 @@ extension WeatherReport {
             temperature: dailyTemperature,
             precipitation: "rain",
             precipitationChance: 0.15,
-            windSpeed: windSpeed,
+            windSpeed: manualSpeed,
             windDirection: windDirection,
             gustSpeed: gustSpeed,
             windCompassDirection: Wind.CompassDirection.north
@@ -155,7 +155,7 @@ extension WeatherReport {
             temperature: hourlyTemperature,
             precipitation: "rain",
             precipitationChance: 0.15,
-            windSpeed: windSpeed,
+            windSpeed: manualSpeed,
             windDirection: windDirection,
             gustSpeed: gustSpeed,
             windCompassDirection: Wind.CompassDirection.north
@@ -179,7 +179,7 @@ extension WeatherReport {
         return .daily(high: high, low: low)
     }()
 
-    private static var windSpeed: Measurement<UnitSpeed> = {
+    private static var manualSpeed: Measurement<UnitSpeed> = {
         Measurement<UnitSpeed>(value: 4.2, unit: .milesPerHour)
     }()
     
