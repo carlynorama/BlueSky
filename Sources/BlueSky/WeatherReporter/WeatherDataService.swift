@@ -8,12 +8,17 @@
 import WeatherKit
 import CoreLocation
 
+//TODO WeatherData Service taht lets you swap in fake data for real behond that feature for WindReports
 
-final public class WeatherData {
+final public class WeatherDataService {
     public init() {
     }
-    public static let shared = WeatherData()
+    
+    
+    public static let shared = WeatherDataService()
+    
     private let service = WeatherService.shared
+    
     
     public private(set) var cachedDailyForecast:Forecast<DayWeather>?
     public private(set) var cachedDailyReport:WeatherReport?

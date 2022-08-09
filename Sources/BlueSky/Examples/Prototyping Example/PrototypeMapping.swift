@@ -10,7 +10,7 @@ import Foundation
 extension BlueSky {
     //TODO: Actor-isolated property can not be mutated error... but it's the int???, reverted to class from actor.
     final class PrototypeMapping:ObservableObject {
-        var weatherSource:WeatherData
+        var weatherSource:WeatherDataService
         
         //@Published private(set) var windReport:WindReport?
         //Should be private set in a normal situation
@@ -18,8 +18,8 @@ extension BlueSky {
         
         
         public init() {
-            weatherSource = WeatherData.shared
-            let tmp = MutatingWindReport(from: WeatherData.shared.windReport ?? WindReport.example(for: .freshBreeze))
+            weatherSource = WeatherDataService.shared
+            let tmp = MutatingWindReport(from: WeatherDataService.shared.windReport ?? WindReport.example(for: .freshBreeze))
             self.windReport = tmp
             print("PWM init: speed \(tmp.speed.description)")
             print("PWM init: wind level \(tmp.windLevel.description)")

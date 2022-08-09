@@ -10,7 +10,7 @@ import Foundation
 
 
 class WeatherMapping:ObservableObject {
-    var weatherSource = WeatherData.shared
+    var weatherSource = WeatherDataService.shared
     
     @Published var windDirectionFactor = 0.0
     @Published var windSpeedFactor = 0.1
