@@ -18,7 +18,7 @@ public struct Location:Locatable {
     let description:String
 }
 
-struct LocationStore {
+public struct LocationStore {
     public static let locations = [
         Location(
             latitude: 34.0536909,

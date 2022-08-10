@@ -12,7 +12,7 @@ public protocol Locatable {
     var longitude:Double {get}
 }
 
-extension Locatable {
+public extension Locatable {
     
     var cllocation:CLLocation {
         CLLocation(latitude: latitude, longitude: longitude)
