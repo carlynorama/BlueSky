@@ -14,7 +14,7 @@ public protocol Locatable {
 
 public extension Locatable {
     
-    var cllocation:CLLocation {
+    var location:CLLocation {
         CLLocation(latitude: latitude, longitude: longitude)
     }
     
@@ -28,7 +28,7 @@ public extension Locatable {
     func lookUpCurrentLocation(completionHandler: @escaping (CLPlacemark?)
                                -> Void ) {
         // Use the last reported location.
-        let location = self.cllocation
+        let location = self.location
         let geocoder = CLGeocoder()
         
         // Look up the location and pass it to the completion handler
@@ -46,7 +46,7 @@ public extension Locatable {
     }
     
     func lookUpPlacemark() async throws -> CLPlacemark {
-        let result = try await CLGeocoder().reverseGeocodeLocation(self.cllocation)
+        let result = try await CLGeocoder().reverseGeocodeLocation(self.location)
         let firstLocation = result[0]
         return firstLocation
     }

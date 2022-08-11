@@ -12,11 +12,7 @@
 
 import Foundation
 
-public struct Location:Locatable {
-    public let latitude:Double
-    public let longitude:Double
-    let description:String
-}
+
 
 public struct LocationStore {
     public static let locations = [
@@ -33,24 +29,24 @@ public struct LocationStore {
             longitude: -87.6244212,
             description: "Chicago, IL, United States"),
         Location(
-            latitude: 47.4612,
-            longitude: 8.5535,
+            latitude: -41.286461,
+            longitude: 174.776230,
             description: "Wellington, New Zealand"),
         Location(
-            latitude: -8.7467,
-            longitude: 115.1668,
+            latitude: -51.630920,
+            longitude: -69.224777,
             description: "Rio Gallegos, Argentina"),
         Location(
-            latitude: -37.8142176,
-            longitude: 144.9631608,
+            latitude: 47.562670,
+            longitude: -52.710890,
             description: "St. Johns, NL, Canada"),
         Location(
-            latitude: -37.8142176,
-            longitude: 144.9631608,
+            latitude: -53.161968,
+            longitude: -70.909561,
             description: "Punta Arenas, Chile"),
         Location(
-            latitude: -37.8142176,
-            longitude: 144.9631608,
+            latitude: 37.765470,
+            longitude: -100.015170,
             description: "Dodge City, KS, United States"),
         Location(
             latitude: 3.52559,
@@ -61,8 +57,8 @@ public struct LocationStore {
             longitude: 142.6667,
             description: "Commonwealth Bay, Antarctica"),
         Location(
-            latitude: 47.4612,
-            longitude: 8.5535,
+            latitude: 47.3686498,
+            longitude: 8.5391825,
             description: "Zürich"),
         Location(
             latitude: -8.7467,

@@ -57,7 +57,7 @@ final public class WeatherDataService {
     func weather(for location:Locatable) async -> CurrentWeather? {
         let currentWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
-                for: location.cllocation,
+                for: location.location,
                 including: .current)
             return forcast
         }.value
@@ -68,7 +68,7 @@ final public class WeatherDataService {
     func dailyForcast(for location:Locatable) async ->Forecast<DayWeather>? {
         let dayWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
-                for: location.cllocation,
+                for: location.location,
                 including: .daily)
             return forcast
         }.value
@@ -79,7 +79,7 @@ final public class WeatherDataService {
     func hourlyForcast(for location:Locatable) async ->Forecast<HourWeather>? {
         let hourlyWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
-                for: location.cllocation,
+                for: location.location,
                 including: .hourly)
             return forcast
         }.value
