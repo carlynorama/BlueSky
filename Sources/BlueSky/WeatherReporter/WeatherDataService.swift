@@ -6,7 +6,6 @@
 //
 
 import WeatherKit
-import CoreLocation
 
 //TODO WeatherData Service taht lets you swap in fake data for real behond that feature for WindReports
 
@@ -16,13 +15,13 @@ final public class WeatherDataService {
     
     
     public static let shared = WeatherDataService()
-    
     private let service = WeatherService.shared
+    public private(set) var location:Locatable = LocationStore.locations[0]
     
     
     public private(set) var cachedDailyForecast:Forecast<DayWeather>?
     public private(set) var cachedDailyReport:WeatherReport?
-    public private(set) var location:Locatable = LocationStore.locations[0]
+
 
     
     public func updateCachedWeather() async {
@@ -34,9 +33,11 @@ final public class WeatherDataService {
         }
     }
     
-    public func updateLocation(to newLocation:Locatable) async {
+    public func updateLocation(to newLocation:Locatable, refreshing:Bool = true) async {
         location = newLocation
-        await updateCachedWeather()
+        if refreshing {
+            await updateCachedWeather()
+        }
     }
     
     func updateCachedDailyForecast() async {

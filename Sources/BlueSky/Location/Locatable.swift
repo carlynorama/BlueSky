@@ -6,6 +6,7 @@
 //
 
 import CoreLocation
+import MapKit
 
 public protocol Locatable {
     var latitude:Double {get}
@@ -13,9 +14,20 @@ public protocol Locatable {
 }
 
 public extension Locatable {
+  
+    //Example on how to conform with identifiable
+//    public var id:String {
+//        "\(latitude)+\(longitude)"
+//    }
     
     var location:CLLocation {
         CLLocation(latitude: latitude, longitude: longitude)
+    }
+    
+    var placemark:CLPlacemark {
+        get async throws {
+            try await lookUpPlacemark()
+        }
     }
     
     var placemarkDescription:String? {
@@ -52,3 +64,32 @@ public extension Locatable {
     }
 }
 
+
+extension CLLocation:Locatable {
+    public var latitude: Double {
+        self.coordinate.latitude
+    }
+    
+    public var longitude: Double {
+        self.coordinate.longitude
+    }
+    
+    public var location:CLLocation {
+        self
+    }
+}
+
+extension MKMapItem:Locatable {
+    public var latitude:Double {
+        self.placemark.location?.coordinate.latitude ?? 0
+    }
+    
+    public var longitude:Double {
+        self.placemark.location?.coordinate.latitude ?? 0
+    }
+    
+    public var location:CLLocation {
+        self.placemark.location ?? CLLocation(latitude: 0, longitude: 0)
+    }
+    
+}

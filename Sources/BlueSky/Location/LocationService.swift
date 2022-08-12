@@ -18,7 +18,7 @@ public protocol LocationService:ObservableObject {
     var locationPublisher:Published<CLLocation>.Publisher { get }
     var locationPublished: Published<CLLocation> { get }
     
-    var currentLocation:CLLocation? { get }
+    var deviceLocation:CLLocation? { get }
 }
 
 public extension LocationService {
@@ -26,18 +26,19 @@ public extension LocationService {
     var latitude:Double { locationToUse.coordinate.latitude }
     var longitude:Double { locationToUse.coordinate.longitude }
     
-// TODO:Returns a string that is a location in memory?
-//    var description:String? {
-//        get async throws {
-//            try await Self.placemarkForLocation(self.locationToUse).locality
-//        }
-//    }
+    // TODO:Returns a string that is a location in memory?
+    //    var description:String? {
+    //        get async throws {
+    //            try await Self.placemarkForLocation(self.locationToUse).locality
+    //        }
+    //    }
     
     static func placemarkForLocation(_ location:CLLocation) async throws -> CLPlacemark {
         let result = try await CLGeocoder().reverseGeocodeLocation(location)
         let firstLocation = result[0]
         return firstLocation
     }
+    
     
     static func locationForString(_ addressString:String) async throws -> CLLocation? {
         let result = try await CLGeocoder().geocodeAddressString(addressString)
@@ -52,15 +53,31 @@ public extension LocationService {
         let string = availableInfo.compactMap{ $0 }.joined(separator: ", ")
         return string
     }
+    
+//    static func descriptionFromLocation(_ location:CLLocation) -> String {
+//        Task {
+//            do {
+//                let placemark = try await Self.placemarkForLocation(location)
+//                let string = Self.descriptionFromPlacemark(placemark)
+//                DispatchQueue.main.async {
+//                    return string//?? "No place name available"
+//                }
+//                
+//            } catch {
+//                print("LM updateDescription: couldn't find locality")
+//            }
+//        }
+//    }
 }
 
 
 public class LocationManager: NSObject, ObservableObject,LocationService  {
+    public static let shared = LocationManager()
     
     let manager = CLLocationManager()
     
-    @Published public var location:CLLocation?
-    @Published public var locality:String?
+    @Published public var deviceLocation:CLLocation?
+    @Published public var deviceLocality:String?
     
     public override init() {
         super.init()
@@ -70,11 +87,11 @@ public class LocationManager: NSObject, ObservableObject,LocationService  {
     }
     
     public var defaultLocation:CLLocation = CLLocation(latitude: 34.0536909,
-                                                longitude: -118.242766)
+                                                       longitude: -118.242766)
     
     //TODO:Check user defaults for a saved defaultLocation, add to init? static builder?
     @Published public var locationToUse:CLLocation = CLLocation(latitude: 34.0536909,
-                                                         longitude: -118.242766)
+                                                                longitude: -118.242766)
     @Published public var locationName:String = "Default Location"
     
     //    static func determineLocationToUse(_ location:CLLocation? = nil) -> CLLocation {
@@ -94,9 +111,6 @@ public class LocationManager: NSObject, ObservableObject,LocationService  {
         _locationToUse
     }
     
-    public var currentLocation:CLLocation? {
-        location
-    }
 }
 
 extension LocationManager:CLLocationManagerDelegate {
@@ -115,7 +129,7 @@ extension LocationManager:CLLocationManagerDelegate {
     }
     
     public func locationManager(_ manager:CLLocationManager,
-                         didChangeAuthorization status:CLAuthorizationStatus) {
+                                didChangeAuthorization status:CLAuthorizationStatus) {
         
         switch status {
         case .notDetermined         : print("notDetermined")        // location permission not asked for yet
@@ -128,9 +142,9 @@ extension LocationManager:CLLocationManagerDelegate {
     }
     
     public func locationManager(_ manager:CLLocationManager, didUpdateLocations locations:[CLLocation]) {
-        location = locations.first//?.coordinate
+        deviceLocation = locations.first//?.coordinate
         updateLocality()
-        if let loc = location {
+        if let loc = deviceLocation {
             locationToUse = loc
         } else {
             locationToUse = defaultLocation
@@ -152,11 +166,11 @@ extension LocationManager:CLLocationManagerDelegate {
 extension LocationManager {
     func updateLocality() {
         Task {
-            if let loc = location {
+            if let loc = deviceLocation {
                 do {
                     let placemark = try await Self.placemarkForLocation(loc)
                     DispatchQueue.main.async {
-                        self.locality = placemark.locality
+                        self.deviceLocality = placemark.locality
                     }
                 } catch {
                     print("LM updateLocality: couldn't find locality")
@@ -167,24 +181,22 @@ extension LocationManager {
     }
     
     func updateDescription() {
-        //placemark.name
         Task {
-                do {
-                    DispatchQueue.main.async {
-                        self.locationName = "..."
-                    }
-                    let placemark = try await Self.placemarkForLocation(locationToUse)
-                    let string = Self.descriptionFromPlacemark(placemark)
-                    
-                        DispatchQueue.main.async {
-                            self.locationName =  string//?? "No place name available"
-                        }
-                    
-                } catch {
-                    print("LM updateDescription: couldn't find locality")
+            do {
+                DispatchQueue.main.async {
+                    self.locationName = "..."
                 }
+                let placemark = try await Self.placemarkForLocation(locationToUse)
+                let string = Self.descriptionFromPlacemark(placemark)
+                
+                DispatchQueue.main.async {
+                    self.locationName =  string//?? "No place name available"
+                }
+                
+            } catch {
+                print("LM updateDescription: couldn't find locality")
             }
-        
+        }
     }
     
     public func updateLocationToUse(lat:Double, long:Double) {
@@ -199,7 +211,9 @@ extension LocationManager {
     
 }
 
+//TODO:https://developer.apple.com/documentation/mapkit/mklocalsearchcompleter
 extension LocationService {
+    //TODO: Why only one result?
     public func search(for searchString:String) async throws -> [CLPlacemark] {
         var results:[CLPlacemark] = []
         
@@ -213,17 +227,17 @@ extension LocationService {
         do {
             let response = try await search.start()
             for item in response.mapItems {
-//                print(item.phoneNumber ?? "No phone number.")
-//                print(item.placemark.location?.coordinate.latitude)
-//                print(item.placemark.location?.coordinate.longitude)
+                print(item.phoneNumber ?? "No phone number.")
+                print(item.placemark.location?.coordinate.latitude)
+                print(item.placemark.location?.coordinate.longitude)
                 results.append(item.placemark)
             }
         } catch {
             print("LocationSevice search(): search failure.")
-//            print("Error: \(error?.localizedDescription ?? "Unknown error").")
-//            return
+            //            print("Error: \(error?.localizedDescription ?? "Unknown error").")
+            //            return
         }
-        
+
         return results
     }
 }
