@@ -71,7 +71,7 @@ public extension LocationService {
 }
 
 
-public class LocationManager: NSObject, ObservableObject,LocationService  {
+public final class LocationManager: NSObject, ObservableObject,LocationService  {
     public static let shared = LocationManager()
     
     let manager = CLLocationManager()
@@ -211,35 +211,7 @@ extension LocationManager {
     
 }
 
-//TODO:https://developer.apple.com/documentation/mapkit/mklocalsearchcompleter
-extension LocationService {
-    //TODO: Why only one result?
-    public func search(for searchString:String) async throws -> [CLPlacemark] {
-        var results:[CLPlacemark] = []
-        
-        let searchRequest = MKLocalSearch.Request()
-        searchRequest.naturalLanguageQuery = searchString
-        
-        //Add region priority? searchRequest.region = yourMapView.region
-        
-        let search = MKLocalSearch(request: searchRequest)
-        
-        do {
-            let response = try await search.start()
-            for item in response.mapItems {
-                print(item.phoneNumber ?? "No phone number.")
-                print(item.placemark.location?.coordinate.latitude)
-                print(item.placemark.location?.coordinate.longitude)
-                results.append(item.placemark)
-            }
-        } catch {
-            print("LocationSevice search(): search failure.")
-            //            print("Error: \(error?.localizedDescription ?? "Unknown error").")
-            //            return
-        }
 
-        return results
-    }
-}
+
 
 

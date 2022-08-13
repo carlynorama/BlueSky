@@ -39,6 +39,13 @@ public extension Location {
         self.description = name
     }
     
+    //relies of locatable extension
+    init(from mkmapitem:MKMapItem) {
+        self.latitude = mkmapitem.latitude
+        self.longitude = mkmapitem.longitude
+        self.description = String([mkmapitem.name, mkmapitem.placemark.administrativeArea, mkmapitem.placemark.country].compactMap({$0}).joined(separator: ", "))
+    }
+    
     
     
 //    init(from mkitem:MKMapItem) {
@@ -46,4 +53,19 @@ public extension Location {
 //        self.longitude = mkitem.coordinate.longitude
 //        self.description = mkitem.name ?? "No name provided."
 //    }
+}
+
+public extension Location {
+    static func locationsForPlacemarks(_ placemarks:[CLPlacemark]) -> [Location]{
+        var tmp:[Location?] = []
+        for item in placemarks {
+            //print(item)
+            if let asLocation = Location(from: item) {
+                tmp.append(asLocation)
+            } else {
+                print("Could not turn into Location.")
+            }
+        }
+        return tmp.compactMap { $0 }
+    }
 }
