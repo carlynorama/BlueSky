@@ -6,17 +6,20 @@
 //
 
 import WeatherKit
+import CoreLocation
+import LocationServices
 
 //TODO WeatherData Service taht lets you swap in fake data for real behond that feature for WindReports
 
 final public class WeatherDataService {
     public init() {
+        self.location = LocationServices.defaultLocation
     }
     
     
     public static let shared = WeatherDataService()
     private let service = WeatherService.shared
-    public private(set) var location:Locatable = LocationStore.locations[0]
+    public private(set) var location:CLLocation
     
     
     public private(set) var cachedDailyForecast:Forecast<DayWeather>?
@@ -33,7 +36,7 @@ final public class WeatherDataService {
         }
     }
     
-    public func updateLocation(to newLocation:Locatable, refreshing:Bool = true) async {
+    public func updateLocation(to newLocation:CLLocation, refreshing:Bool = true) async {
         location = newLocation
         if refreshing {
             await updateCachedWeather()
@@ -55,10 +58,10 @@ final public class WeatherDataService {
     }
     
     @discardableResult
-    func weather(for location:Locatable) async -> CurrentWeather? {
+    func weather(for location:CLLocation) async -> CurrentWeather? {
         let currentWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
-                for: location.location,
+                for: location,
                 including: .current)
             return forcast
         }.value
@@ -66,10 +69,10 @@ final public class WeatherDataService {
     }
     
     @discardableResult
-    func dailyForcast(for location:Locatable) async ->Forecast<DayWeather>? {
+    func dailyForcast(for location:CLLocation) async ->Forecast<DayWeather>? {
         let dayWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
-                for: location.location,
+                for: location,
                 including: .daily)
             return forcast
         }.value
@@ -77,10 +80,10 @@ final public class WeatherDataService {
     }
     
     @discardableResult
-    func hourlyForcast(for location:Locatable) async ->Forecast<HourWeather>? {
+    func hourlyForcast(for location:CLLocation) async ->Forecast<HourWeather>? {
         let hourlyWeather = await Task.detached(priority: .userInitiated) {
             let forcast = try? await self.service.weather(
-                for: location.location,
+                for: location,
                 including: .hourly)
             return forcast
         }.value
