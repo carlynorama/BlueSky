@@ -24,6 +24,26 @@ extension WindReport {
     }
 }
 
+public extension WeatherKit.Wind.CompassDirection {
+    init(compassAngle:Measurement<UnitAngle>) {
+        self = Self.init(wedgeNumber: Self.wedgeNumberFor(angle:compassAngle))
+    }
+    
+    init(degrees:Double) {
+        self = Self.init(wedgeNumber: Self.wedgeNumberFor(degrees: degrees))
+    }
+    
+    init(radians:Double) {
+        self = Self.init(wedgeNumber: Self.wedgeNumberFor(radians: radians))
+    }
+    
+    init(wedgeNumber:Int) {
+        self = Self.directionFromWedgeNumber(wedgeNumber: wedgeNumber)
+    }
+    
+}
+
+
 extension WeatherKit.Wind.CompassDirection {
         static let degreesCircle = 360.0
         static let numberOfWedges = 16
@@ -67,21 +87,6 @@ extension WeatherKit.Wind.CompassDirection {
             wedgeNumberFor(angle: Measurement<UnitAngle>(value: radians, unit: .radians))
         }
         
-        init(compassAngle:Measurement<UnitAngle>) {
-            self = Self.init(wedgeNumber: Self.wedgeNumberFor(angle:compassAngle))
-        }
-        
-        init(degrees:Double) {
-            self = Self.init(wedgeNumber: Self.wedgeNumberFor(degrees: degrees))
-        }
-        
-        init(radians:Double) {
-            self = Self.init(wedgeNumber: Self.wedgeNumberFor(radians: radians))
-        }
-        
-        init(wedgeNumber:Int) {
-            self = Self.directionFromWedgeNumber(wedgeNumber: wedgeNumber)
-        }
         
         static func directionFromWedgeNumber(wedgeNumber:Int) -> Self {
             guard Range(0...(Self.numberOfWedges - 1)).contains(wedgeNumber) else {

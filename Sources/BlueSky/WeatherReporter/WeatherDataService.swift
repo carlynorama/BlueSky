@@ -12,50 +12,57 @@ import LocationServices
 //TODO WeatherData Service taht lets you swap in fake data for real behond that feature for WindReports
 
 final public class WeatherDataService {
-    public init() {
-        self.location = LocationServices.defaultLocation
-    }
+    public static let defaultLocation = CLLocation(
+        latitude: 34.0536909,
+        longitude: -118.242766)
+    
+    public init() { }
     
     
     public static let shared = WeatherDataService()
     private let service = WeatherService.shared
-    public private(set) var location:CLLocation
     
     
-    public private(set) var cachedDailyForecast:Forecast<DayWeather>?
+    struct WeatherRequestDailyResult {
+        let location:CLLocation
+        let forcast:Forecast<DayWeather>
+    }
+    
+    private var cachedDailyForecast:WeatherRequestDailyResult?
     public private(set) var cachedDailyReport:WeatherReport?
-
-
     
-    public func updateCachedWeather() async {
-        await updateCachedDailyForecast()
+    public func windReport(for location:CLLocation) async -> WindReport? {
+        //A) Is there cached data
+        //B) Is it stale
+        //C) If it isn't there or it's stale...
+        await updateCachedWeather(for: location)
+        return WindReport(cachedDailyReport)
+    }
+    
+    
+    public func updateCachedWeather(for location:CLLocation) async {
+        await updateCachedDailyForecast(for: location)
         if let cachedDailyForecast {
-            cachedDailyReport = WeatherReport(cachedDailyForecast)
+            cachedDailyReport = WeatherReport(cachedDailyForecast.forcast, for: cachedDailyForecast.location)
         } else {
             cachedDailyReport = nil
         }
     }
     
-    public func updateLocation(to newLocation:CLLocation, refreshing:Bool = true) async {
-        location = newLocation
-        if refreshing {
-            await updateCachedWeather()
-        }
-    }
+//    public func updateLocation(to newLocation:CLLocation, refreshing:Bool = true) async {
+//        location = newLocation
+//        if refreshing {
+//            await updateCachedWeather()
+//        }
+//    }
     
-    func updateCachedDailyForecast() async {
+    func updateCachedDailyForecast(for location:CLLocation) async {
         if let daily = await dailyForcast(for: location) {
-            cachedDailyForecast = daily
+            cachedDailyForecast = WeatherRequestDailyResult(location: location, forcast: daily)
         }
     }
     
-    public var windReport:WindReport? {
-        if cachedDailyForecast != nil {
-            return WindReport(cachedDailyForecast!)
-        } else {
-            return nil
-        }
-    }
+    
     
     @discardableResult
     func weather(for location:CLLocation) async -> CurrentWeather? {

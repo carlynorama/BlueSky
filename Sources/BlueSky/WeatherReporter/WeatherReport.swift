@@ -7,11 +7,13 @@
 
 import Foundation
 import WeatherKit
+import CoreLocation
 
 
 
 public struct WeatherReport {
     let date: Date
+    let location: CLLocation
     let condition: String
     let symbolName: String
     
@@ -39,8 +41,9 @@ public struct WeatherReport {
 
 
 public extension WeatherReport {
-    init(_ forecast: DayWeather) {
+    init(_ forecast: DayWeather, for location:CLLocation) {
         date = forecast.date
+        self.location = location
         condition = forecast.condition.description
         symbolName = forecast.symbolName
         temperature = .daily(
@@ -54,8 +57,9 @@ public extension WeatherReport {
         windCompassDirection = forecast.wind.compassDirection
     }
     
-    init(_ forecast: HourWeather) {
+    init(_ forecast: HourWeather, for location:CLLocation) {
         date = forecast.date
+        self.location = location
         condition = forecast.condition.description
         symbolName = forecast.symbolName
         temperature = .hourly(forecast.temperature)
@@ -67,9 +71,10 @@ public extension WeatherReport {
         windCompassDirection = forecast.wind.compassDirection
     }
     
-    init(_ rawForcast: Forecast<DayWeather>) {
+    init(_ rawForcast: Forecast<DayWeather>, for location:CLLocation) {
         let forecast = rawForcast.forecast[0]
         date = forecast.date
+        self.location = location
         condition = forecast.condition.description
         symbolName = forecast.symbolName
         temperature = .daily(
@@ -83,9 +88,10 @@ public extension WeatherReport {
         windCompassDirection = forecast.wind.compassDirection
     }
     
-    init(_ currentWeather: CurrentWeather) {
+    init(_ currentWeather: CurrentWeather, for location:CLLocation) {
         let forecast = currentWeather
         date = forecast.date
+        self.location = location
         condition = forecast.condition.description
         symbolName = forecast.symbolName
         temperature = .hourly(forecast.temperature)
@@ -98,8 +104,8 @@ public extension WeatherReport {
     }
 }
 
-enum Temperature {
-    typealias Value = Measurement<UnitTemperature>
+public enum Temperature {
+    public typealias Value = Measurement<UnitTemperature>
     
     case daily(high: Value, low: Value)
     case hourly(Value)
@@ -116,7 +122,7 @@ enum Temperature {
 
 
 extension Temperature: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         switch self {
         case let .daily(high, low):
             hasher.combine(0)
@@ -131,10 +137,14 @@ extension Temperature: Hashable {
 
 #if DEBUG
 // Use this for preview data.
-extension WeatherReport {
+
+
+
+public extension WeatherReport {
     static var daily: WeatherReport {
         WeatherReport(
             date: .now,
+            location: WeatherDataService.defaultLocation,
             condition: condition,
             symbolName: "cloud.sun.rain",
             temperature: dailyTemperature,
@@ -150,6 +160,7 @@ extension WeatherReport {
     static var hourly: WeatherReport {
         WeatherReport(
             date: .now,
+            location: WeatherDataService.defaultLocation,
             condition: condition,
             symbolName: "cloud.sun.rain",
             temperature: hourlyTemperature,
